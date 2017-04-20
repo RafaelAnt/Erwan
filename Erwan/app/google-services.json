@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "936439241164",
+    "firebase_url": "https://erwan-62857.firebaseio.com",
+    "project_id": "erwan-62857",
+    "storage_bucket": "erwan-62857.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936439241164:android:dc2f194c7716ab27",
+        "android_client_info": {
+          "package_name": "rafaelantunes.erwan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936439241164-q12b02p65rgeibddqefch6oeob62sn52.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "rafaelantunes.erwan",
+            "certificate_hash": "c75a55dff748d0b08ba1906bbe54e65836466489"
+          }
+        },
+        {
+          "client_id": "936439241164-cu91sbe5u8rk4jtn079r2ee0u9lje31v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwwm6KWMeTiFJL4ZrA751EaGY1P8aNzQY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "936439241164-cu91sbe5u8rk4jtn079r2ee0u9lje31v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
