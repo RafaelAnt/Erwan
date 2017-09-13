@@ -1,18 +1,32 @@
 package rafaelantunes.erwan.activities;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Window;
+import android.widget.TextView;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import rafaelantunes.erwan.R;
 
 
-public class SplashScreenActivity extends Activity {
+public class SplashScreenActivity extends AppCompatActivity {
 
-    private final String TAG = "ERWAN KATTEL";
+    private final String TAG = "RafaDebugSplashScreen";
 
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private GoogleApiClient mGoogleApiClient;
+    private TextView mStatusTextView;
+    private TextView mDetailTextView;
+
+    private boolean isLogedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,12 +38,44 @@ public class SplashScreenActivity extends Activity {
         FadingCircle doubleBounce = new FadingCircle();
         progressBar.setIndeterminateDrawable(doubleBounce);*/
 
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        Uri data = intent.getData();
+        //Intent intent = getIntent();
+        //String action = intent.getAction();
+        //Uri data = intent.getData();
 
-        start();
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    isLogedIn = true;
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    isLogedIn = false;
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
 
+
+
+        checkLogin();
+
+    }
+
+
+    private void checkLogin(){
+
+        if (isLogedIn) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, LoginRegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -44,34 +90,18 @@ public class SplashScreenActivity extends Activity {
         //start();
     }
 
-    private void start() {
-
-        // TODO: 25/01/2017 check login here;
-
-        //isLogedIn();
-        //vamos passar o login a frente;
-        boolean login = true;
-
-        if (login) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        } else {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        }
-
-    }
-
-
-
     @Override
     public void onStart() {
         super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 
 }
