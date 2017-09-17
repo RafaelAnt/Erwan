@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -42,6 +43,13 @@ public class SplashScreenActivity extends AppCompatActivity {
         //String action = intent.getAction();
         //Uri data = intent.getData();
 
+        checkLogin();
+
+    }
+
+
+    private void checkLogin(){
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -59,15 +67,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                 // ...
             }
         };
-
-
-
-        checkLogin();
-
-    }
-
-
-    private void checkLogin(){
 
         if (isLogedIn) {
             Intent intent = new Intent(this, MainActivity.class);
@@ -104,4 +103,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         }
     }
 
+    public void onClickLinearLayout(View view) {
+        checkLogin();
+    }
 }

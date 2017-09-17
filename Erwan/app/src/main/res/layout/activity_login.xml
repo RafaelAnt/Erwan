@@ -36,7 +36,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_email"
                 android:inputType="textEmailAddress"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:text="horyanpt@gmail.com"/>
 
             <EditText
                 android:id="@+id/password"
@@ -47,7 +48,8 @@
                 android:imeActionLabel="@string/action_sign_in"
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:text="123456"/>
 
             <LinearLayout
                 android:id="@+id/sing_in_register_buttons"

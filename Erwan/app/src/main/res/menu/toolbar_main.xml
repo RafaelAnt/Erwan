@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/toolbar_weather"
+        android:icon="@drawable/field_white"
+        android:title="Fertilizer"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/toolbar_friends"
+        android:icon="@drawable/friends_white"
+        android:title="Friends"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/toolbar_settings"
+        android:orderInCategory="100"
+        android:icon="@drawable/settings_white"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+</menu>

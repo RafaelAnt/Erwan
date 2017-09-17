@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/line1"/>
+
+    <group android:checkableBehavior="none" android:id="@+id/topDrawer">
+        <item
+            android:id="@+id/drawer_invite_friends"
+            android:icon="@drawable/friends_black"
+            android:title="Invite Friends" />
+
+
+
+    </group>
+
+    <group android:checkableBehavior="none" android:id="@+id/botDrawer">
+
+        <item
+            android:id="@+id/drawer_language"
+            android:icon="@drawable/language_black"
+            android:title="Language" />
+        <item
+            android:id="@+id/drawer_notifications"
+            android:icon="@drawable/notification_black"
+            android:title="Notifications" />
+        <item
+            android:id="@+id/drawer_settings"
+            android:icon="@drawable/settings_black"
+            android:title="Settings" />
+        <item
+            android:id="@+id/drawer_help"
+            android:icon="@drawable/help_black"
+            android:title="Help" />
+        <item
+            android:id="@+id/drawer_about"
+            android:icon="@drawable/about_black"
+            android:title="About" />
+    </group>
+</menu>

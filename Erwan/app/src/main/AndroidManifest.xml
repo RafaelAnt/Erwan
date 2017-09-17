@@ -14,25 +14,36 @@
         android:roundIcon="@drawable/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".activities.SplashScreenActivity"
             android:theme="@style/SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <!--action android:name="android.intent.action.VIEW" /-->
+                <!-- action android:name="android.intent.action.VIEW" / -->
                 <category android:name="android.intent.categotitlery.LAUNCHER" />
-                <!--category android:name="android.intent.category.DEFAULT" /-->
+                <!-- category android:name="android.intent.category.DEFAULT" / -->
                 <!-- category android:name="android.intent.category.BROWSABLE" / -->
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.LoginRegisterActivity"
             android:label="@string/title_activity_login" />
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/main_menu" />
+            android:label="@string/main_menu"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".activities.MainActivity" />
+        <activity
+            android:name=".activities.FriendsActivity"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.WeatherActivity"
+            android:label="@string/title_activity_weather"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
