@@ -33,7 +33,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_splash_screen);
+        setContentView(R.layout.splash_screen_activity);
 
         /*ProgressBar progressBar = (ProgressBar)findViewById(R.id.spin_kit);
         FadingCircle doubleBounce = new FadingCircle();

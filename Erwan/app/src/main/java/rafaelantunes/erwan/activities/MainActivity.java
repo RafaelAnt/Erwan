@@ -20,12 +20,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import rafaelantunes.erwan.R;
+import rafaelantunes.erwan.applications.GlobalVariables;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
-    private final String TAG = "RafaDebugMainActivity";
+    private final String TAG = "RafaDebugMain";
 
     private FirebaseUser firebaseUser;
+
+    private  GlobalVariables globalVariables;
 
     // UI
     private TextView mEmailView;
@@ -33,7 +36,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity);
+
+        Log.d(TAG,"Loading Global Variables...");
+
+        globalVariables = ((GlobalVariables)getApplicationContext());
 
         Log.d(TAG,"Loading Toolbar...");
 
@@ -52,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //View header = getLayoutInflater().inflate(R.layout.nav_header_main, null);
+        //View header = getLayoutInflater().inflate(R.layout.main_drawer_header, null);
         //navigationView.addHeaderView(header);
 
         // UI
@@ -130,17 +137,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent;
         //noinspection SimplifiableIfStatement
         switch (id) {
+
             case R.id.toolbar_settings:
+                Log.d(TAG,"Loading Settings Activity...");
                 // User chose the "Settings" item, show the app settings UI...
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
-
                 break;
+
             case R.id.toolbar_friends:
+                Log.d(TAG,"Loading Friends Activity...");
                 intent = new Intent(this, FriendsActivity.class);
                 startActivity(intent);
                 break;
+
             case R.id.toolbar_weather:
+                Log.d(TAG,"Loading Weather Activity...");
                 intent = new Intent(this, WeatherActivity.class);
                 startActivity(intent);
                 break;
@@ -168,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.toolbar_main, menu);
+        getMenuInflater().inflate(R.menu.main_toolbar, menu);
         return true;
     }
 

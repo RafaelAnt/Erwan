@@ -15,7 +15,7 @@ tools:context=".activities.MainActivity">
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_menu_add" /-->
 
-    <include layout="@layout/content_main" />
+    <include layout="@layout/main_content" />
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

@@ -5,7 +5,7 @@
     <item
         android:id="@+id/toolbar_weather"
         android:icon="@drawable/field_white"
-        android:title="Fertilizer"
+        android:title="Weather"
         app:showAsAction="always"
         />
 
