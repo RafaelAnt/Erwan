@@ -31,6 +31,8 @@ public class GlobalVariables extends Application{
     private double altitudeNet;
     private Weather weather;
 
+    private boolean useLocationNet;
+
     //sensors accuracy
     private int accuracy_light;
     private int accuracy_accelerometer;
@@ -39,6 +41,24 @@ public class GlobalVariables extends Application{
     private LightFragment currentLightFragment;
     private WeatherFragment currentWeatherFragment;
 
+    //game
+    private boolean watered;
+
+    public boolean isWatered() {
+        return watered;
+    }
+
+    public void setWatered(boolean watered) {
+        this.watered = watered;
+    }
+
+    public boolean isUseLocationNet() {
+        return useLocationNet;
+    }
+
+    public void setUseLocationNet(boolean useLocationNet) {
+        this.useLocationNet = useLocationNet;
+    }
 
     public float getLight_objective() {
         return light_objective;

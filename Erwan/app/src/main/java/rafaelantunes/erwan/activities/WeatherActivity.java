@@ -41,6 +41,7 @@ import rafaelantunes.erwan.classes.Weather;
 import rafaelantunes.erwan.classes.WeatherHttpClient;
 import rafaelantunes.erwan.fragments.LightFragment;
 import rafaelantunes.erwan.fragments.SectionsPagerAdapter;
+import rafaelantunes.erwan.fragments.WeatherFragment;
 
 
 public class WeatherActivity extends AppCompatActivity implements SensorEventListener {
@@ -55,6 +56,7 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
     private LocationManager locationManager;
     private LocationListener locationListenerGPS, locationListenerNet;
     private Location locationGPS;
+    private Location locationNet;
 
     //time
     private long startTimeLight;
@@ -64,20 +66,10 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
     private long elapsedTimeLight;
     private long elapsedTimeAccelerometer;
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
+
+    private boolean weatherDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,10 +121,15 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
         locationListenerGPS = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                if(locationGPS == null) locationGPS = location;
-                globalVariables.setLatitude(location.getLatitude());
-                globalVariables.setLongitude(location.getLongitude());
-                globalVariables.setAltitude(location.getAltitude());
+                if(location != null){
+                    locationGPS = location;
+                    globalVariables.setLatitude(location.getLatitude());
+                    globalVariables.setLongitude(location.getLongitude());
+                    globalVariables.setAltitude(location.getAltitude());
+                    if(!weatherDone) getCity();
+                }else{
+                    Log.e(TAG, "Location GPS came NULL.");
+                }
             }
 
             @Override
@@ -151,13 +148,19 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
             }
         };
 
+        locationNet = null;
         locationListenerNet = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                if(locationGPS == null) locationGPS = location;
-                globalVariables.setLatitudeNet(location.getLatitude());
-                globalVariables.setLongitudeNet(location.getLongitude());
-                globalVariables.setAltitudeNet(location.getAltitude());
+                if(location != null){
+                    locationNet = location;
+                    globalVariables.setLatitudeNet(location.getLatitude());
+                    globalVariables.setLongitudeNet(location.getLongitude());
+                    globalVariables.setAltitudeNet(location.getAltitude());
+                    if(!weatherDone) getCity();
+                }else{
+                    Log.e(TAG, "Location NET came NULL.");
+                }
             }
 
             @Override
@@ -179,7 +182,11 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
         startTimeLight = System.currentTimeMillis();
         startTimeAccelerometer = System.currentTimeMillis();
 
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_MULTIPLE_LOCATION);
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION},
+                MY_PERMISSIONS_REQUEST_MULTIPLE_LOCATION);
+
         Log.d(TAG,"Finished \"OnCreate\"");
     }
 
@@ -210,7 +217,7 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
                 }
                 startTimeLight = System.currentTimeMillis();
 
-                Log.d(TAG,"Light Sensor changed");
+                //Log.d(TAG,"Light Sensor changed");
 
                 float lux = event.values[0];
                 LightFragment lfrag =
@@ -221,13 +228,14 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
                 }
 
                 if(globalVariables.getLight_total()>=globalVariables.getLight_objective()){
-                    Toast.makeText(this, "You have reached the objective for today!",
+                    Toast.makeText(this,
+                            "You have reached the objective for today!",
                             Toast.LENGTH_LONG).show();
                 }
 
 
                 lfrag.updateView();
-                Log.d(TAG,"Finished");
+                //Log.d(TAG,"Finished");
                 break;
             case (Sensor.TYPE_ACCELEROMETER):
                 endTimeAccelerometer =  System.currentTimeMillis();
@@ -238,7 +246,11 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
                 startTimeAccelerometer = System.currentTimeMillis();
 
 
-                Log.d(TAG,"Accelerometer Sensor changed");
+                //Log.d(TAG,"Accelerometer Sensor changed");
+
+
+
+
                 globalVariables.setAccelerometer(event.values[0], event.values[1], event.values[2]);
                 //TODO: UPDATE THE VIEW
                 //Log.d(TAG,"Finished");
@@ -249,17 +261,25 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(
+            int requestCode, String permissions[], int[] grantResults) {
+
         switch (requestCode) {
             case (MY_PERMISSIONS_REQUEST_MULTIPLE_LOCATION):
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // permission was granted
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
                     Log.d(TAG, "Permission Granted!");
                     try {
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListenerGPS);
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
+                        locationManager.requestLocationUpdates(
+                                LocationManager.GPS_PROVIDER, 0, 0, locationListenerGPS);
+                        locationManager.requestLocationUpdates(
+                                LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNet);
+
                     } catch (SecurityException e) {
-                        Toast.makeText(getApplicationContext(), "Location Access Denied", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),
+                                "Location Access Denied", Toast.LENGTH_SHORT).show();
                         Log.d(TAG,"Permission Denied!");
                     }
 
@@ -269,6 +289,8 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
             default:
         }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -296,7 +318,8 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
         return super.onOptionsItemSelected(item);
     }
 
-    public void getCity (View view){
+    public void getCity (){
+
         //AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
         //AlertDialog alertDialog;
 
@@ -304,50 +327,46 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
         String countryCode;
 
         if(locationGPS == null){
-            Log.e(TAG, "Location not available...");
-            // set dialog message
-            //alertDialogBuilder.setMessage();
-            // create alert dialog
-            //alertDialog = alertDialogBuilder.create();
-            // show it
-            //alertDialog.show();
-            return;
+            if(locationNet == null){
+                Log.e(TAG, "Location not available...");
+                Toast.makeText(this, "Location not available. Turn on your GPS.",
+                        Toast.LENGTH_LONG).show();
+                return;
+            }else{
+                globalVariables.setUseLocationNet(true);
+            }
+        }else{
+            globalVariables.setUseLocationNet(false);
         }
 
         Geocoder gcd = new Geocoder(WeatherActivity.this, Locale.ENGLISH);
         List<Address> addresses = null;
         try {
-            Log.d("location",locationGPS.toString());
-            addresses = gcd.getFromLocation(locationGPS.getLatitude(), locationGPS.getLongitude(), 1);
+            if(!globalVariables.isUseLocationNet()){
+                Log.d(TAG,locationGPS.toString());
+                addresses = gcd.getFromLocation(locationGPS.getLatitude(),
+                        locationGPS.getLongitude(), 1);
+            }else{
+                Log.d(TAG,locationNet.toString());
+                addresses = gcd.getFromLocation(locationNet.getLatitude(),
+                        locationNet.getLongitude(), 1);
+            }
+
         } catch (IOException e) {
             Log.e(TAG,"error noGetFromLocation");
             e.printStackTrace();
         }
         if (addresses != null && addresses.size() > 0){
-            //System.out.println();
-            // set dialog message
             city = addresses.get(0).getSubAdminArea();
-            countryCode=addresses.get(0).getCountryCode();
-            //alertDialogBuilder.setMessage("Location: " + city + ", " + countryCode);
+            countryCode = addresses.get(0).getCountryCode();
             Log.d(TAG,"The address is: " + addresses.get(0));
 
-            // create alert dialog
-            //alertDialog = alertDialogBuilder.create();
-            // show it
-            //alertDialog.show();
-
             JSONWeatherTask task = new JSONWeatherTask();
-            task.execute(new String[]{city+","+countryCode});
+            task.execute(city+","+countryCode);
 
-
+            weatherDone = true;
         }else{
             Log.e(TAG,"Location not found...");
-            // set dialog message
-            //alertDialogBuilder.setMessage("Location not found...");
-            // create alert dialog
-            //alertDialog = alertDialogBuilder.create();
-            // show it
-            //alertDialog.show();
         }
     }
 
@@ -377,7 +396,8 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
                 weather = JSONWeatherParser.getWeather(data);
 
                 // Let's retrieve the icon
-                //weather.iconData = ( (new WeatherHttpClient()).getImage(weather.currentCondition.getIcon()));
+                weather.iconData = (new WeatherHttpClient()).
+                        getImage(weather.currentCondition.getIcon());
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -392,27 +412,9 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
 
             globalVariables.setWeather(weather);
 
-            if (weather.iconData != null && weather.iconData.length > 0) {
-                Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
-
-                //imgView.setImageBitmap(img);
-            }
-
-            //Log.d("Result",""+weather.currentCondition.getCondition());
-            //tv_cidade.setText(weather.location.getCity() + "," + weather.location.getCountry());
-            //tv_weather.setText(weather.currentCondition.getCondition() + "(" + weather.currentCondition.getDescr() + ")");
-            /*temp.setText("" + Math.round((weather.temperature.getTemp() - 273.15)) + "�C");
-            hum.setText("" + weather.currentCondition.getHumidity() + "%");
-            press.setText("" + weather.currentCondition.getPressure() + " hPa");
-            windSpeed.setText("" + weather.wind.getSpeed() + " mps");
-            windDeg.setText("" + weather.wind.getDeg() + "�");*/
-
+            WeatherFragment wfrag =
+                    (WeatherFragment) mSectionsPagerAdapter.getRegisteredFragment(0);
+            wfrag.updateView();
         }
     }
-
-
-
-
-
-
 }

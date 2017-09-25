@@ -28,8 +28,10 @@
     <string name="loading">Loading&#8230;</string>
     <string name="title_activity_settings">Settings</string>
 
-    <!-- Strings related to Settings -->
-
+    <!-- Strings related to the Weather -->
+    <string name="rain">It rained recently. There is no need to water the plant.</string>
+    <string name="no_rain">It did not rain recently. You better water the plant.</string>
+    <string name="watered">Your plant is watered.</string>
 
     <!-- Strings related to Settings -->
     <string name="action_add_friend">Add Friend</string>

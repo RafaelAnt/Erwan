@@ -50,7 +50,7 @@
                         android:textColor="@color/colorPrimaryDarkest"
                         android:textStyle="bold"
                         android:gravity="center"
-                        android:text="Sunny!!!"/>
+                        android:text="@string/loading"/>
 
                     <TextView
                         android:id="@+id/tv_description"
@@ -59,7 +59,7 @@
                         android:layout_weight="0.6"
                         android:maxLines="1"
                         android:gravity="center"
-                        android:text="The sun is up in the sky!!!" />
+                        android:text="@string/loading" />
 
                 </LinearLayout>
 
@@ -95,7 +95,7 @@
                         android:maxLines="1"
                         android:textStyle="bold"
                         android:gravity="center"
-                        android:text="22 ºC"/>
+                        android:text="@string/loading"/>
 
                 </LinearLayout>
 
@@ -120,9 +120,9 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.7"
-                        android:maxLines="1"
+                        android:maxLines="2"
                         android:gravity="center"
-                        android:text="It rained recently." />
+                        android:text="@string/loading" />
 
                 </LinearLayout>
 

@@ -41,9 +41,10 @@ public class JSONWeatherParser {
         JSONObject mainObj = getObject("main", jObj);
         weather.currentCondition.setHumidity(getInt("humidity", mainObj));
         weather.currentCondition.setPressure(getInt("pressure", mainObj));
-        weather.temperature.setMaxTemp(getFloat("temp_max", mainObj));
-        weather.temperature.setMinTemp(getFloat("temp_min", mainObj));
-        weather.temperature.setTemp(getFloat("temp", mainObj));
+        // Kelvin to Celsius
+        weather.temperature.setMaxTemp(getFloat("temp_max", mainObj) - (float)273.15);
+        weather.temperature.setMinTemp(getFloat("temp_min", mainObj) - (float)273.15);
+        weather.temperature.setTemp(getFloat("temp", mainObj) - (float)273.15);
 
         // Wind
         JSONObject wObj = getObject("wind", jObj);
