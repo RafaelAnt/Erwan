@@ -16,9 +16,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -323,6 +325,8 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
         //AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
         //AlertDialog alertDialog;
 
+        Log.d(TAG,"Getting City...");
+
         String city;
         String countryCode;
 
@@ -361,6 +365,7 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
             countryCode = addresses.get(0).getCountryCode();
             Log.d(TAG,"The address is: " + addresses.get(0));
 
+
             JSONWeatherTask task = new JSONWeatherTask();
             task.execute(city+","+countryCode);
 
@@ -385,6 +390,27 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
 
 
     private class JSONWeatherTask extends AsyncTask<String, Void, Weather> {
+        public JSONWeatherTask asyncObject;   // as CountDownTimer has similar method -> to prevent shadowing
+
+        @Override
+        protected void onPreExecute() {
+            asyncObject = this;
+            Log.d(TAG, "Creating Timeout.");
+            new CountDownTimer(7000, 7000) {
+                public void onTick(long millisUntilFinished) {
+                    // You can monitor the progress here as well by changing the onTick() time
+                }
+
+                public void onFinish() {
+                    // stop async task if not in progress
+                    if (asyncObject.getStatus() == AsyncTask.Status.RUNNING) {
+                        Log.d(TAG, "Timeout on Weather information.");
+                        asyncObject.cancel(false);
+                        // Add any specific task you wish to do as your extended class variable works here as well.
+                    }
+                }
+            }.start();
+        }
 
         @Override
         protected Weather doInBackground(String... params) {
@@ -392,28 +418,47 @@ public class WeatherActivity extends AppCompatActivity implements SensorEventLis
             Weather weather = new Weather();
             String data = ( (new WeatherHttpClient()).getWeatherData(params[0]));
 
+            Log.d(TAG, "Weather Information Collected.");
+
             try {
                 weather = JSONWeatherParser.getWeather(data);
 
                 // Let's retrieve the icon
-                weather.iconData = (new WeatherHttpClient()).
-                        getImage(weather.currentCondition.getIcon());
+                weather.iconData = (new WeatherHttpClient()).getImage(weather.currentCondition.getIcon());
 
             } catch (JSONException e) {
+                Log.e(TAG, "Error loading image.");
                 e.printStackTrace();
             }
             return weather;
 
         }
 
+
         @Override
         protected void onPostExecute(Weather weather) {
+            Log.d(TAG, "Finished async task.");
             super.onPostExecute(weather);
+
+
+            if(weather == null){
+                Log.e(TAG, "Weather is null");
+
+                //Display error:
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(WeatherActivity.this);
+                AlertDialog alertDialog;
+                // set dialog message
+                alertDialogBuilder.setMessage("Weather could not be loaded.\nVerify your internet connection and your location settings.");
+
+                // create alert dialog
+                alertDialog = alertDialogBuilder.create();
+                // show it
+                alertDialog.show();
+            }
 
             globalVariables.setWeather(weather);
 
-            WeatherFragment wfrag =
-                    (WeatherFragment) mSectionsPagerAdapter.getRegisteredFragment(0);
+            WeatherFragment wfrag = (WeatherFragment) mSectionsPagerAdapter.getRegisteredFragment(0);
             wfrag.updateView();
         }
     }

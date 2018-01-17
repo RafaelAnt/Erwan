@@ -2,8 +2,10 @@ package rafaelantunes.erwan.fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +18,13 @@ import android.widget.Toast;
 import java.util.Locale;
 
 import rafaelantunes.erwan.R;
+import rafaelantunes.erwan.activities.MainActivity;
 import rafaelantunes.erwan.activities.WeatherActivity;
 import rafaelantunes.erwan.applications.GlobalVariables;
 import rafaelantunes.erwan.classes.Weather;
+
+import static android.os.SystemClock.sleep;
+
 
 /**
  * Created by Rafael on 17/09/2017.
@@ -74,8 +80,7 @@ public class WeatherFragment extends Fragment {
             //return null;
         }
 
-        if(weather.currentCondition.getDescr() == null ||
-                weather.currentCondition.getCondition() == null){
+        if(weather.currentCondition.getDescr() == null || weather.currentCondition.getCondition() == null){
             Log.e(TAG, "Weather is empty...");
             try {
                 Toast.makeText(
@@ -87,6 +92,7 @@ public class WeatherFragment extends Fragment {
                 e.printStackTrace();
             }
         }else{
+            Log.d(TAG, "Weather is not empty...");
             tv_condition.setText(weather.currentCondition.getCondition());
 
             // Set the first letter to Uppercase.
@@ -99,16 +105,20 @@ public class WeatherFragment extends Fragment {
             
             if(weather.rain.getAmmount() > 0){
                 tv_rain.setText(R.string.rain);
+                globalVariables.setWatered(true);
                 b_water.setEnabled(false);
             }else{
                 tv_rain.setText(R.string.no_rain);
                 b_water.setEnabled(true);
             }
+
             if (weather.iconData != null && weather.iconData.length > 0) {
                 Bitmap img = BitmapFactory.decodeByteArray(
                         weather.iconData, 0, weather.iconData.length);
 
                 im_about.setImageBitmap(img);
+            }else{
+                Log.d(TAG, "Image could not be loaded.");
             }
         }
         if(globalVariables.isWatered()) tv_rain.setText(R.string.watered);
@@ -144,6 +154,44 @@ public class WeatherFragment extends Fragment {
             }
         });
 
+        if(globalVariables == null) {
+            Log.e(TAG, "ERROR GLOBAL VARIABLES NULL");
+        }
+
+        NoConnectionTask task = new NoConnectionTask();
+        task.execute();
+
         return rootView;
+    }
+
+    private class NoConnectionTask extends AsyncTask<String, Void, Weather> {
+
+        @Override
+        protected Weather doInBackground(String... strings) {
+            sleep(5000);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Weather weather) {
+            super.onPostExecute(weather);
+
+            globalVariables = (GlobalVariables) getActivity().getApplicationContext();
+
+            if(globalVariables.getWeather() == null){
+                Log.e(TAG, "Weather is null");
+
+                //Display error:
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                AlertDialog alertDialog;
+                // set dialog message
+                alertDialogBuilder.setMessage("Weather could not be loaded.\nVerify your internet connection and your location settings.");
+
+                // create alert dialog
+                alertDialog = alertDialogBuilder.create();
+                // show it
+                alertDialog.show();
+            }
+        }
     }
 }

@@ -20,6 +20,11 @@ public class WeatherHttpClient {
 
         try {
             con = (HttpURLConnection) ( new URL(BASE_URL + location + "&APPID=" + API_KEY ) ).openConnection();
+
+            //setting timeout to 5 secs
+            //con.setConnectTimeout(5000);
+            //con.setReadTimeout(5000);
+
             con.setRequestMethod("GET");
 
             con.setDoInput(true);

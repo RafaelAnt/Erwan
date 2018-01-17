@@ -15,7 +15,14 @@
     android:weightSum="1"
     android:orientation="vertical">
 
-    <LinearLayout
+
+    <rafaelantunes.erwan.classes.ErwanGLSurfaceView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/surfaceView2"
+        android:layout_weight="1" />
+
+    <!--LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:weightSum="1"
@@ -53,7 +60,6 @@
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:text="Warnings:"/>
-        <!--android:layout_below="@id/animal_header"-->
 
         <View
             android:id="@+id/line2"
@@ -73,6 +79,6 @@
             android:paddingEnd="20dp"
             android:layout_below="@id/line2"/>
 
-    </RelativeLayout>
+    </RelativeLayout-->
 
 </LinearLayout>
