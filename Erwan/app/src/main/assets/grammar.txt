@@ -2,7 +2,6 @@
 % Pinheiro. Original: X=F[+X][-X]FX
 % '/' and '*' -> alpha in circular coordinates
 % '-' and '+' -> beta in circular coordinates (height)
-
 % Maple Tree
 #AXIOM
 FX
@@ -48,7 +47,7 @@ F=F+F-[+F][-F]
 #END
 
 ****
-Depois do #END não faz nada...
+Depois do #END n?o faz nada...
 
 
 Outro

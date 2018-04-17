@@ -67,14 +67,19 @@ int Parser::separate(char* prodRule, char * target, char** result) {
 	char* esq, *dir = NULL;
 	int equals = 0;
 
+    LOGD("---A COMEÇAR O SEPARATE");
+
 	while (prodRule[i] != NULL && prodRule[i] != '\0') {
 		if (prodRule[i] == '=') equals++;
 		i++;
 	}
 	if (equals != 1) return PARSER_PRODUCTION_RULE_EQUALS_ERROR;
 
+
+
 	esq = strtok(prodRule, "=");
-    strcpy(prodRule,dir);
+    LOGD("---A MEIO");
+    strcpy(prodRule, dir);
     LOGD("esq: %s,   dir: %s\n",esq,dir);
 
 	
@@ -121,37 +126,39 @@ int Parser::parse() {
 	
 	//TODO: Check new strtok!!!
 	while (fgets(buf, sizeof buf, f) != NULL) {
-		//printf("FRASE ORIGINAL: %s\n", buf);
+		//LOGD("FRASE ORIGINAL: ___%s___\n", buf);
 		token = strtok(buf, separators);
-		//printf("primeiro token: %s\n", token);
-		//printf("primeiro char: %c\n", token[0]);
+		//LOGD("primeiro token: ___%s___\n", token);
+		//LOGD("primeiro char: %c\n", token[0]);
 		while (token != NULL){
 			//printf("ENTREI AQUI\n");
 			if (token[0] == '%') {
-				//printf("COMMENT DETECTED\n");
+				LOGD("COMMENT DETECTED\n");
 				break;
 			}
 			if (strcmp(token, "#AXIOM") == 0) {
 				saveTo = SAVE_TO_AXIOM;
-				//printf("AXIOMA DETETADO\n");
+				LOGD("AXIOMA DETETADO\n");
 				break;
 			}
 			if (strcmp(token, "#DEGREES") == 0) {
 				saveTo = SAVE_TO_DEGREE;
-				//printf("DEGREE DETETADO\n");
+                LOGD("DEGREE DETETADO\n");
 				break;
 			}
 			if (strcmp(token, "#PRODUCTION") == 0) {
 				saveTo = SAVE_TO_PRODUCTION_RULES;
-				//printf("PRODUTION DETETADO\n");
+                LOGD("PRODUTION DETETADO\n");
 				break;
 			}
 			if (strcmp(token, "#END") == 0) {
 				saveTo = SAVE_TO_END;
-				//printf("FIM DETETADO\n");
+                LOGD("FIM DETETADO\n");
 				break;
 			}
-			
+
+            //LOGE("A meio do parser!\n");
+
 			switch (saveTo) {
 			case(-1):
 				return PARSER_SYNTAX_ERROR;
@@ -160,9 +167,9 @@ int Parser::parse() {
 				if (hasInvalidChar(TYPE_AXIOM, token)) {
 					return PARSER_AXIOM_INVALID_CHARACTERS;
 				}
-				//printf("AXIOMA: %d\n", strlen(token));
+				//LOGD("AXIOMA: %d\n", strlen(token));
 				strcpy(axiom, token);
-				//printf("AXIOMA: %s\n", axiom);
+				LOGD("AXIOMA: %s\n", axiom);
 				break;
 
 			case(SAVE_TO_DEGREE):
@@ -170,21 +177,22 @@ int Parser::parse() {
 					return PARSER_DEGREE_INVALID_CHARACTERS;
 				}
 				degree = (float) atof(token);
-				//printf("GRAU: %f\n", degree);
+				LOGD("GRAU: %f\n", degree);
 				break;
 				
 			case(SAVE_TO_PRODUCTION_RULES):
-				
 
+                LOGD("A GUARDAR PROD");
 				if (hasInvalidChar(TYPE_PRODUCTION, token)) {
 					return PARSER_PRODUCTION_RULE_INVALID_CHARACTERS;
 				}
-				
+                    LOGD("A SEPARAR COISOS");
 				r = separate(token, &c, &s2);
+                    LOGD("ACABAR DE SEPARAR");
 				if (r == PARSER_DONE) {
-					//printf("------------PRODUTION RULE: %c = %s\n", c, s2);
+					LOGD("------------PRODUTION RULE: %c = %s\n", c, s2);
 					addProdutionRule(c, s2);
-					//printf("------------Added %c\n",c);
+					LOGD("------------Added %c\n",c);
 				}
 				else {
 					return r;
@@ -229,13 +237,13 @@ void Parser::printGrammar(){
 
 	list<ProductionRule>::iterator it;
 
-	printf("AXIOM: %s\n", getAxiom());
-	printf("DEGREE: %f\n", getDegree());
+	LOGD("AXIOM: %s\n", getAxiom());
+    LOGD("DEGREE: %f\n", getDegree());
 
 
 	for (it = productionRules.begin(); it != productionRules.end(); it++) {
 		ProductionRule aux = *it;
-		printf("PRODUTION RULE:\n\tTarget: %c\n\tResult: %s\n", aux.getTarget(), aux.getResult().data());
+        LOGD("PRODUTION RULE:\n\tTarget: %c\n\tResult: %s\n", aux.getTarget(), aux.getResult().data());
 	}
 }
 

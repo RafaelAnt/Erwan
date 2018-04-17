@@ -1,7 +1,10 @@
 package rafaelantunes.erwan.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,8 +22,13 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import rafaelantunes.erwan.R;
 import rafaelantunes.erwan.applications.GlobalVariables;
+import rafaelantunes.erwan.classes.GLES3JNILib;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -86,6 +94,76 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
 
+        setGrammar();
+
+    }
+
+    private boolean setGrammar(){
+
+        Log.d(TAG, "Copying files to internal storage.");
+
+        AssetManager assetManager = getAssets();
+        String[] files = null;
+        try {
+            files = assetManager.list("");
+        } catch (IOException e) {
+            Log.e("tag", "Failed to get asset file list.", e);
+        }
+
+        for(String filename : files) {
+            //Log.d(TAG, "Found file: \""+filename+"\"");
+
+            //skip other files
+            if(!filename.equals("grammar.txt")){
+                continue;
+            }
+
+            InputStream in = null;
+            OutputStream out = null;
+            try {
+                in = assetManager.open(filename);
+
+                //String outDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Erwan" ;
+
+
+                //Log.d(TAG, "Out Dir: \""+outDir+"\"");
+                //File erwanDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+                //creating folder if i does not exist.
+                //erwanDirectory.mkdirs();
+
+                //erwanDirectory = new File(outDir);
+                //creating folder if i does not exist.
+                //erwanDirectory.mkdirs();
+
+
+                //File outFile = new File(outDir, filename);
+
+                //out = new FileOutputStream(outFile);
+                out = openFileOutput(filename, Context.MODE_PRIVATE);
+
+                GLES3JNILib.sendPath(getFilesDir().getAbsolutePath());
+
+                copyFile(in, out);
+                in.close();
+                in = null;
+                out.flush();
+                out.close();
+                out = null;
+            } catch(IOException e) {
+                Log.e(TAG, "Failed to copy asset file: " + filename, e);
+            }
+        }
+
+
+        return true;
+    }
+
+    private void copyFile(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = in.read(buffer)) != -1){
+            out.write(buffer, 0, read);
+        }
     }
 
     @Override

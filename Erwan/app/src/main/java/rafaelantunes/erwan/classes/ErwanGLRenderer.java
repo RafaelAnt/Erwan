@@ -1,11 +1,18 @@
 package rafaelantunes.erwan.classes;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.IntBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -33,9 +40,11 @@ public class ErwanGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
 
-        GLES3JNILib.init(context.getAssets());
 
+        GLES3JNILib.init(context.getAssets());
     }
+
+
 
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {

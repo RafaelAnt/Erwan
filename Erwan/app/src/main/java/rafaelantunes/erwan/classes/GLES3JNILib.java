@@ -25,4 +25,7 @@ public class GLES3JNILib {
     public static native void startScaling(float dist);
     public static native void updateScale(float dist);
     public static native void stopScaling();*/
+
+    public static native void sendPath(String path);
+
 }

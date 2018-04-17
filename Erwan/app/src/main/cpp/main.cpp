@@ -4,6 +4,7 @@
 
 #include <jni.h>
 #include <android/log.h>
+#include <android/asset_manager.h>
 
 #include <map>
 
@@ -17,6 +18,11 @@ static const char* mainTAG = "RafaDebugMainCPP";
 
 #define LOGD(...) \
   ((void)__android_log_print(ANDROID_LOG_DEBUG, mainTAG, __VA_ARGS__))
+#define LOGE(...) \
+  ((void)__android_log_print(ANDROID_LOG_ERROR, mainTAG, __VA_ARGS__))
+// #define LOGD_VAR(...) \
+  ((void)__android_log_print(ANDROID_LOG_INFO, mainTAG, "test int = %d", testInt))
+
 #define PI 3.1415
 #define EXPANSIONS_NUMBER 3
 #define GROUND_RADIUS 3.0f
@@ -31,6 +37,7 @@ static const char* mainTAG = "RafaDebugMainCPP";
 
 
 static VSMathLib *vsml;
+string pathToGrammar;
 
 void initVSL() {
 
@@ -50,6 +57,29 @@ void initVSL() {
     vsml->loadIdentity(VSMathLib::AUX3);
 }
 
+string ConvertJString(JNIEnv* env, jstring str)
+{
+    //if ( !str ) LString();
+
+    const jsize len = env->GetStringUTFLength(str);
+    const char* strChars = env->GetStringUTFChars(str, (jboolean *)0);
+
+    std::string Result(strChars, len);
+
+    env->ReleaseStringUTFChars(str, strChars);
+
+    return Result;
+}
+
+extern "C"
+void
+Java_rafaelantunes_erwan_classes_GLES3JNILib_sendPath(JNIEnv* env, jobject obj, jstring path) {
+    std::string pathConv = ConvertJString( env, path );
+    pathToGrammar = pathConv;
+    LOGD("Received grammmar path on android: \"%s\"", pathToGrammar.c_str());
+
+}
+
 extern "C"
 void
 Java_rafaelantunes_erwan_classes_GLES3JNILib_init(JNIEnv* env, jobject obj, jobject assetManager) {
@@ -58,49 +88,70 @@ Java_rafaelantunes_erwan_classes_GLES3JNILib_init(JNIEnv* env, jobject obj, jobj
     Parser parser = Parser();
     list<ProductionRule> pr;
 
+    //jobject assetManager = state_param->activity->assetManager;
+    //AAssetManager* mgr = AAssetManager_fromJava(env, assetManager);
+    //AAssetManager* mgr = app->activity->assetManager;
+
     int r = -1;
 
-    if (parser.setFile("grammar.txt") == PARSER_FILE_NOT_FOUND) {
-        LOGD("File Not Found!\n");
+    /*AAssetDir* assetDir = AAssetManager_openDir(mgr, "");
+    const char* filename = (const char*)NULL;
+    while ((filename = AAssetDir_getNextFileName(assetDir)) != NULL) {
+        AAsset* asset = AAssetManager_open(mgr, filename, AASSET_MODE_STREAMING);
+        char buf[BUFSIZ];
+        int nb_read = 0;
+        FILE* out = fopen(filename, "w");
+        while ((nb_read = AAsset_read(asset, buf, BUFSIZ)) > 0)
+            fwrite(buf, nb_read, 1, out);
+        fclose(out);
+        AAsset_close(asset);
+    }
+    AAssetDir_close(assetDir);*/
+
+    if (parser.setFile(pathToGrammar + "/grammar.txt") == PARSER_FILE_NOT_FOUND) {
+        LOGE("File Not Found!\n");
         return;
     }
 
+    LOGE("RAFA ERROR: Unexpected error!\n");
     r=parser.parse();
+    LOGE("ACABEI O PARSE!\n");
+
     switch (r){
         case(PARSER_DONE):
             parser.printGrammar();
             break;
 
         case(PARSER_AXIOM_INVALID_CHARACTERS):
-            LOGD("Axiom contains invalid characters!\n");
+            LOGE("Axiom contains invalid characters!\n");
             return;
 
         case(PARSER_DEGREE_INVALID_CHARACTERS):
-            LOGD("Degree contains invalid characters!\n");
+            LOGE("Degree contains invalid characters!\n");
             return;
 
         case(PARSER_PRODUCTION_RULE_INVALID_CHARACTERS):
-            LOGD("One of the production rules contains invalid characters!\n");
+            LOGE("One of the production rules contains invalid characters!\n");
             return;
 
         case(PARSER_SYNTAX_ERROR):
-            LOGD("Syntax error (probably some tag \"#\" out of place or missing)...\n");
+            LOGE("Syntax error (probably some tag \"#\" out of place or missing)...\n");
             return;
 
         case(PARSER_UNKNOWN_ERROR):
-            LOGD("UNKNOWN ERROR (probably some tag \"#\" out of place or missing)...\n");
+            LOGE("UNKNOWN ERROR (probably some tag \"#\" out of place or missing)...\n");
             return;
 
         case(PARSER_PRODUCTION_RULE_EQUALS_ERROR):
-            printf("One of the production rules has an invalid number of equals \"=\", only one is allowed!\n");
+            LOGE("One of the production rules has an invalid number of equals \"=\", only one is allowed!\n");
             return;
 
         case(PARSER_PRODUCTION_RULE_MORE_THAN_1_LEFT):
-            LOGD("One of the production rules has more than one symbol before \"=\"!\n");
+            LOGE("One of the production rules has more than one symbol before \"=\"!\n");
             return;
 
         default:
-            LOGD("Unexpected error!\n");
+            LOGE("Unexpected error!\n");
             return;
     }
 

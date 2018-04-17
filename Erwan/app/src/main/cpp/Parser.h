@@ -14,6 +14,8 @@ static const char* parserTAG = "RafaDebugParserCPP";
 
 #define LOGD(...) \
   ((void)__android_log_print(ANDROID_LOG_DEBUG, parserTAG, __VA_ARGS__))
+#define LOGE(...) \
+  ((void)__android_log_print(ANDROID_LOG_ERROR, parserTAG, __VA_ARGS__))
 
 #define PARSER_DONE 100
 #define PARSER_FILE_NOT_FOUND 101
